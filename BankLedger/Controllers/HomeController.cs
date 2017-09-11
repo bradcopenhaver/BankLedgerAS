@@ -22,7 +22,7 @@ namespace BankLedger.Controllers
         {
             Ledger cachedLedger = new Ledger();
 
-            // Look for cache key.
+            // Check if cached ledger exists already.
             if (!_cache.TryGetValue("cachedLedger", out cachedLedger))
             {
                 // Key not in cache, so make a new ledger.
@@ -48,8 +48,9 @@ namespace BankLedger.Controllers
         [HttpPost]
         public IActionResult Create(int newAcctNum, string pswd, string confPswd)
         {
+            //Retrieve cached ledger
             Ledger cachedLedger = new Ledger();
-            if (!_cache.TryGetValue("cachedLedger", out cachedLedger))
+            if (_cache.TryGetValue("cachedLedger", out cachedLedger))
             {
                 if (pswd == confPswd)
                 {
@@ -63,11 +64,41 @@ namespace BankLedger.Controllers
                     ViewBag.Message = "Passwords do not match. Try again.";
                 }                
             }
-            //else
-            //{
-            //    ViewBag.Message = "No accounts in ledger.Please create a new account.";
-            //}
+
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult Account(int loginAcctNum, string loginPswd)
+        {
+            //Retrieve cached ledger
+            Ledger cachedLedger = new Ledger();
+            if (!_cache.TryGetValue("cachedLedger", out cachedLedger))
+            {
+                return RedirectToAction("Index");
+            }
+
+            //See if account exists
+            if(cachedLedger.Accounts.Exists(x => x.AcctNumber==loginAcctNum))
+            {
+                Account currentAcct = cachedLedger.Accounts.Find(x => x.AcctNumber == loginAcctNum);
+                //See if password matches
+                if(currentAcct.Password == loginPswd)
+                {
+                    ViewBag.CurrentAcct = currentAcct;
+                    return View();
+                }
+                else
+                {
+                    ViewBag.Message = "Incorrect password.";
+                    return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+                ViewBag.Message = "That account number does not exist.";
+                return RedirectToAction("Index");
+            }
         }
 
         public IActionResult About()

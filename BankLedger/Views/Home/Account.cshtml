@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Best Bank Ledger";
+}
+<div class="row">
+    <div class="col-md-12">
+        <h3>Account Number @ViewBag.CurrentAcct.AcctNumber.ToString()</h3>
+
+        <h4>Current Balance: @ViewBag.CurrentAcct.Balance.ToString()</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Deposit">
+            <label>Deposit:</label>
+            <input type="number" id="depAmt" name="depAmt" />
+            <input type="submit" value="Deposit" />
+        </form>
+    </div>
+    <div class="col-md-4">
+        <form asp-action="Withdraw">
+            <label>Withdraw:</label>
+            <input type="number" id="wdAmt" name="wdAmt" />
+            <input type="submit" value="Withdraw" />
+        </form>
+    </div>
+</div>
+
+

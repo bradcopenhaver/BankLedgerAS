@@ -106,6 +106,22 @@ namespace BankLedger.Controllers
             }
         }
 
+        public IActionResult Logout()
+        {
+            //Retrieve cached ledger
+            Ledger cachedLedger = new Ledger();
+            if (!_cache.TryGetValue("cachedLedger", out cachedLedger))
+            {
+                return RedirectToAction("Index");
+            }
+
+            //Update cache
+            cachedLedger.Authenticated = false;
+            _cache.Set("cachedLedger", cachedLedger);
+
+            return RedirectToAction("Index");
+        }
+
         public IActionResult Account(string id)
         {
             //Retrieve cached ledger
@@ -118,8 +134,13 @@ namespace BankLedger.Controllers
             //Check authentication
             if (cachedLedger.Authenticated == true && cachedLedger.CurrentAcctNum == Int32.Parse(id))
             {
+                //Retrieve account
                 Account currentAcct = cachedLedger.Accounts.Find(x => x.AcctNumber == cachedLedger.CurrentAcctNum);
 
+                //Create list of account's transactions
+                List<Transaction> currentAcctTransactions = cachedLedger.Transactions.FindAll(x => x.AccountNumber == cachedLedger.CurrentAcctNum);
+
+                ViewBag.Transactions = currentAcctTransactions;
                 ViewBag.CurrentAcct = currentAcct;
                 return View();
             }

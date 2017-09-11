@@ -30,8 +30,22 @@
 
 <div class="row">
     <div class="col-md-12">
-        <a asp-action="Index"><h4>Logout</h4></a>
+        <a asp-action="Logout"><h4>Logout</h4></a>
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-12">
+        <h4>Transactions:</h4>
+        <ul>
+            @foreach(var transaction in ViewBag.Transactions)
+            {
+                var transactionType = "Deposit";
+                if (transaction.StartingBalance > transaction.EndingBalance) { transactionType = "Withdraw"; }
+                <li>@transaction.TimeOfTransaction.ToString(): @transactionType Starting Balance: @transaction.StartingBalance Ending Balance: @transaction.EndingBalance</li>
+
+            }
+        </ul>
+    </div>
+</div>
 

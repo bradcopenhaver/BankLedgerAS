@@ -154,7 +154,34 @@ namespace BankLedger.Controllers
             //Update cache
             _cache.Set("cachedLedger", cachedLedger);
 
-            return RedirectToAction("Account"); //This doesn't work yet.
+            return RedirectToAction("Account", new { id = cachedLedger.CurrentAcctNum }); 
+        }
+
+        [HttpPost]
+        public IActionResult Withdraw(int wdAcctNum, double wdAmt)
+        {
+            //Retrieve cached ledger
+            Ledger cachedLedger = new Ledger();
+            if (!_cache.TryGetValue("cachedLedger", out cachedLedger))
+            {
+                return RedirectToAction("Index");
+            }
+
+            //Retrieve account
+            Account currentAcct = cachedLedger.Accounts.Find(x => x.AcctNumber == wdAcctNum);
+
+            //Apply deposit
+            double startBal = currentAcct.Balance;
+            currentAcct.Balance -= wdAmt;
+            double endBal = currentAcct.Balance;
+
+            //Log transaction
+            cachedLedger.Transactions.Add(new Transaction(wdAcctNum, startBal, endBal));
+
+            //Update cache
+            _cache.Set("cachedLedger", cachedLedger);
+
+            return RedirectToAction("Account", new { id = cachedLedger.CurrentAcctNum });
         }
 
         public IActionResult About()

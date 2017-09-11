@@ -5,11 +5,34 @@
 <div class="row">
     <div class="col-md-4">
         <h2>Login to Your Account</h2>
+        <form>
+            <label>Account Number: </label>
+            <input />
+            <label>Password: </label>
+            <input type="password" />
+            <input type="submit" value="Login" />
+        </form>
     </div>
     <div class="col-md-4">
         <h3>-or-</h3>
     </div>
     <div class="col-md-4">
         <h2>Register an Account</h2>
+        <form asp-controller="Home" asp-action="Create" method="post">
+            <label>Account Number: </label>
+            <input readonly name="newAcctNum" type="number" value=1 />
+            <label>Password: </label>
+            <input name="pswd" type="password" />
+            <label>Confirm Password: </label>
+            <input name="confPswd" type="password" />
+            <input type="submit" value="Create Account" />
+        </form>
     </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="messages">
+            <p>@ViewBag.Message</p>
+        </div>
+    </div>    
 </div>

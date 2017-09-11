@@ -7,13 +7,15 @@ namespace BankLedger.Models
 {
     public class Ledger
     {
-        public static List<Account> Accounts { get; set; }
-        public static List<Transaction> Transactions { get; set; }
-        public static bool Authenticated { get; set; }
-        public static int CurrentAcctNum { get; set; }
+        public  List<Account> Accounts { get; set; }
+        public  List<Transaction> Transactions { get; set; }
+        public  bool Authenticated { get; set; }
+        public  int CurrentAcctNum { get; set; }
 
         public Ledger()
         {
+            Accounts = new List<Account> { };
+            Transactions = new List<Transaction> { };
             Authenticated = false;
         }
     }

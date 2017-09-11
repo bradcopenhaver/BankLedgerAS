@@ -11,11 +11,11 @@ namespace BankLedger.Models
         public string Password { get; set; }
         public double Balance { get; set; }
 
-        public Account(int acctNum, string pswd, double bal)
+        public Account(int acctNum, string pswd)
         {
             AcctNumber = acctNum;
             Password = pswd;
-            Balance = bal;
+            Balance = 0d;
         }
 
         public void Deposit(float depositAmt)

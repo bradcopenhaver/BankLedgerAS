@@ -69,7 +69,7 @@ namespace BankLedger.Controllers
         }
 
         [HttpPost]
-        public IActionResult Account(int loginAcctNum, string loginPswd)
+        public IActionResult Login(int loginAcctNum, string loginPswd)
         {
             //Retrieve cached ledger
             Ledger cachedLedger = new Ledger();
@@ -85,8 +85,13 @@ namespace BankLedger.Controllers
                 //See if password matches
                 if(currentAcct.Password == loginPswd)
                 {
-                    ViewBag.CurrentAcct = currentAcct;
-                    return View();
+                    //"Login" to account and update cache
+                    cachedLedger.Authenticated = true;
+                    cachedLedger.CurrentAcctNum = currentAcct.AcctNumber;
+
+                    _cache.Set("cachedLedger", cachedLedger);
+
+                    return RedirectToAction("Account", new { id = currentAcct.AcctNumber });
                 }
                 else
                 {
@@ -97,6 +102,30 @@ namespace BankLedger.Controllers
             else
             {
                 ViewBag.Message = "That account number does not exist.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        public IActionResult Account(string id)
+        {
+            //Retrieve cached ledger
+            Ledger cachedLedger = new Ledger();
+            if (!_cache.TryGetValue("cachedLedger", out cachedLedger))
+            {
+                return RedirectToAction("Index");
+            }
+
+            //Check authentication
+            if (cachedLedger.Authenticated == true && cachedLedger.CurrentAcctNum == Int32.Parse(id))
+            {
+                Account currentAcct = cachedLedger.Accounts.Find(x => x.AcctNumber == cachedLedger.CurrentAcctNum);
+
+                ViewBag.CurrentAcct = currentAcct;
+                return View();
+            }
+            else
+            {
+                ViewBag.Message = "You are not logged in.";
                 return RedirectToAction("Index");
             }
         }

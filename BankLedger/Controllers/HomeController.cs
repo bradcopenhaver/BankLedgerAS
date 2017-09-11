@@ -101,6 +101,33 @@ namespace BankLedger.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Deposit(int depAcctNum, double depAmt)
+        {
+            //Retrieve cached ledger
+            Ledger cachedLedger = new Ledger();
+            if (!_cache.TryGetValue("cachedLedger", out cachedLedger))
+            {
+                return RedirectToAction("Index");
+            }
+            
+            //Retrieve account
+            Account currentAcct = cachedLedger.Accounts.Find(x => x.AcctNumber == depAcctNum);
+
+            //Apply deposit
+            double startBal = currentAcct.Balance;
+            currentAcct.Balance += depAmt;
+            double endBal = currentAcct.Balance;
+
+            //Log transaction
+            cachedLedger.Transactions.Add(new Transaction(depAcctNum, startBal, endBal));
+
+            //Update cache
+            _cache.Set("cachedLedger", cachedLedger);
+
+            return RedirectToAction("Account"); //This doesn't work yet.
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

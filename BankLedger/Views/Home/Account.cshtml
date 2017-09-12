@@ -15,7 +15,7 @@
             <div class="form-group">
                 <label>Deposit:</label>
                 <input type="hidden" id="depAcctNum" name="depAcctNum" value=@ViewBag.CurrentAcct.AcctNumber />
-                <input type="number" id="depAmt" name="depAmt" class="form-control" min="0" />
+                <input type="number" id="depAmt" name="depAmt" class="form-control" min="0" step="0.01" />
             </div>            
             <input type="submit" value="Deposit" />
         </form>
@@ -25,7 +25,7 @@
             <div class="form-group">
                 <label>Withdraw:</label>
                 <input type="hidden" id="wdAcctNum" name="wdAcctNum" value=@ViewBag.CurrentAcct.AcctNumber />
-                <input type="number" id="wdAmt" name="wdAmt" class="form-control" min="0" max="@ViewBag.CurrentAcct.Balance" />
+                <input type="number" id="wdAmt" name="wdAmt" class="form-control" min="0" max="@ViewBag.CurrentAcct.Balance" step="0.01" />
             </div>
             <input type="submit" value="Withdraw" />
 </form>

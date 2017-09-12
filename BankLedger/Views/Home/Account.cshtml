@@ -25,7 +25,7 @@
             <div class="form-group">
                 <label>Withdraw:</label>
                 <input type="hidden" id="wdAcctNum" name="wdAcctNum" value=@ViewBag.CurrentAcct.AcctNumber />
-                <input type="number" id="wdAmt" name="wdAmt" class="form-control" max="@ViewBag.CurrentAcct.Balance" />
+                <input type="number" id="wdAmt" name="wdAmt" class="form-control" min="0" max="@ViewBag.CurrentAcct.Balance" />
             </div>
             <input type="submit" value="Withdraw" />
 </form>

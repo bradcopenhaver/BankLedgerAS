@@ -6,12 +6,16 @@
     <div class="col-md-4">
         <h2>Login to Your Account</h2>
         <form asp-controller="Home" asp-action="Login">
-            <label>Account Number: </label>
-            <input id="loginAcctNum" name="loginAcctNum" />
-            <label>Password: </label>
-            <input id="loginPswd" name="loginPswd" type="password" />
-            <input type="submit" value="Login" />
-        </form>
+            <div class="form-group">
+                <label>Account Number: </label>
+                <input id="loginAcctNum" name="loginAcctNum" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Password: </label>
+                <input id="loginPswd" name="loginPswd" type="password" class="form-control" />
+            </div>
+                <input type="submit" value="Login" />
+</form>
     </div>
     <div class="col-md-4">
         <h3>-or-</h3>
@@ -19,20 +23,26 @@
     <div class="col-md-4">
         <h2>Register an Account</h2>
         <form asp-controller="Home" asp-action="Create" method="post">
-            <label>Account Number: </label>
-            <input readonly id="newAcctNum" name="newAcctNum" type="number" value=@(ViewBag.Ledger.Accounts.Count +1) />
-            <label>Password: </label>
-            <input name="pswd" id="pswd" type="password" />
-            <label>Confirm Password: </label>
-            <input name="confPswd" id="confPswd" type="password" />
-            <input type="submit" value="Create Account" />
-        </form>
+            <div class="form-group">
+                <label>Account Number: </label>
+                <input readonly id="newAcctNum" name="newAcctNum" type="number" class="form-control" value=@(ViewBag.Ledger.Accounts.Count +1) />
+            </div>
+            <div class="form-group">
+                <label>Password: </label>
+                <input name="pswd" id="pswd" type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Confirm Password: </label>
+                <input name="confPswd" id="confPswd" type="password" class="form-control" />
+            </div>
+                <input type="submit" value="Create Account" />
+</form>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
         <div id="messages">
-            <p>@ViewBag.Message</p>
+            <p>@ViewBag.Ledger.Messages[ViewBag.Ledger.MessageIndex]</p>
         </div>
     </div>    
 </div>

@@ -15,6 +15,7 @@ namespace BankLedger.Controllers
 
         public HomeController(IMemoryCache memoryCache)
         {
+            //Initialize cache
             _cache = memoryCache;
         }
 
@@ -28,12 +29,11 @@ namespace BankLedger.Controllers
                 // Key not in cache, so make a new ledger.
                 Dictionary<string, object> newCachedLedger = new Dictionary<string, object> { };
                 Ledger newLedger = new Ledger();
-                ViewBag.Message = "No accounts in ledger. Please create a new account.";
-
+                
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    // Keep in cache for this time, reset time if accessed.
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(15));
+                    // Keep in cache.
+                    .SetPriority(CacheItemPriority.NeverRemove);
 
                 // Save data in cache.
                 _cache.Set("cachedLedger", newLedger, cacheEntryOptions);
@@ -56,12 +56,11 @@ namespace BankLedger.Controllers
                 {
                     Account newAcct = new Account(newAcctNum, pswd);
                     cachedLedger.Accounts.Add(newAcct);
-
-                    ViewBag.Message = "Account created. Log in to make an initial deposit.";
+                    cachedLedger.MessageIndex = 2;
                 }
                 else
                 {
-                    ViewBag.Message = "Passwords do not match. Try again.";
+                    cachedLedger.MessageIndex = 3;
                 }                
             }
 
@@ -81,27 +80,27 @@ namespace BankLedger.Controllers
             //See if account exists
             if(cachedLedger.Accounts.Exists(x => x.AcctNumber==loginAcctNum))
             {
+                //Retrieve account
                 Account currentAcct = cachedLedger.Accounts.Find(x => x.AcctNumber == loginAcctNum);
+
                 //See if password matches
                 if(currentAcct.Password == loginPswd)
                 {
                     //"Login" to account and update cache
                     cachedLedger.Authenticated = true;
                     cachedLedger.CurrentAcctNum = currentAcct.AcctNumber;
-
-                    _cache.Set("cachedLedger", cachedLedger);
-
+                    
                     return RedirectToAction("Account", new { id = currentAcct.AcctNumber });
                 }
                 else
                 {
-                    ViewBag.Message = "Incorrect password.";
+                    cachedLedger.MessageIndex = 4;
                     return RedirectToAction("Index");
                 }
             }
             else
             {
-                ViewBag.Message = "That account number does not exist.";
+                cachedLedger.MessageIndex = 5;
                 return RedirectToAction("Index");
             }
         }
@@ -117,7 +116,7 @@ namespace BankLedger.Controllers
 
             //Update cache
             cachedLedger.Authenticated = false;
-            _cache.Set("cachedLedger", cachedLedger);
+            cachedLedger.MessageIndex = 7;
 
             return RedirectToAction("Index");
         }
@@ -146,7 +145,7 @@ namespace BankLedger.Controllers
             }
             else
             {
-                ViewBag.Message = "You are not logged in.";
+                cachedLedger.MessageIndex = 6;
                 return RedirectToAction("Index");
             }
         }
@@ -171,10 +170,7 @@ namespace BankLedger.Controllers
 
             //Log transaction
             cachedLedger.Transactions.Add(new Transaction(depAcctNum, startBal, endBal));
-
-            //Update cache
-            _cache.Set("cachedLedger", cachedLedger);
-
+            
             return RedirectToAction("Account", new { id = cachedLedger.CurrentAcctNum }); 
         }
 
@@ -191,32 +187,15 @@ namespace BankLedger.Controllers
             //Retrieve account
             Account currentAcct = cachedLedger.Accounts.Find(x => x.AcctNumber == wdAcctNum);
 
-            //Apply deposit
+            //Apply withdraw
             double startBal = currentAcct.Balance;
             currentAcct.Balance -= wdAmt;
             double endBal = currentAcct.Balance;
 
             //Log transaction
             cachedLedger.Transactions.Add(new Transaction(wdAcctNum, startBal, endBal));
-
-            //Update cache
-            _cache.Set("cachedLedger", cachedLedger);
-
+            
             return RedirectToAction("Account", new { id = cachedLedger.CurrentAcctNum });
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
         }
 
         public IActionResult Error()

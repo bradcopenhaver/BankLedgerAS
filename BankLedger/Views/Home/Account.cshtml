@@ -12,19 +12,23 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Deposit">
-            <label>Deposit:</label>
-            <input type="hidden" id="depAcctNum" name="depAcctNum" value=@ViewBag.CurrentAcct.AcctNumber />
-            <input type="number" id="depAmt" name="depAmt" />
+            <div class="form-group">
+                <label>Deposit:</label>
+                <input type="hidden" id="depAcctNum" name="depAcctNum" value=@ViewBag.CurrentAcct.AcctNumber />
+                <input type="number" id="depAmt" name="depAmt" class="form-control" min="0" />
+            </div>            
             <input type="submit" value="Deposit" />
         </form>
     </div>
     <div class="col-md-4">
         <form asp-action="Withdraw">
-            <label>Withdraw:</label>
-            <input type="hidden" id="wdAcctNum" name="wdAcctNum" value=@ViewBag.CurrentAcct.AcctNumber />
-            <input type="number" id="wdAmt" name="wdAmt" />
+            <div class="form-group">
+                <label>Withdraw:</label>
+                <input type="hidden" id="wdAcctNum" name="wdAcctNum" value=@ViewBag.CurrentAcct.AcctNumber />
+                <input type="number" id="wdAmt" name="wdAmt" class="form-control" max="@ViewBag.CurrentAcct.Balance" />
+            </div>
             <input type="submit" value="Withdraw" />
-        </form>
+</form>
     </div>
 </div>
 
